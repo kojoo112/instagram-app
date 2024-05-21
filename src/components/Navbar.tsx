@@ -10,8 +10,8 @@ import SearchFillIcon from "@/components/ui/icons/SearchFillIcon";
 import NewIcon from "@/components/ui/icons/NewIcon";
 import NewFillIcon from "@/components/ui/icons/NewFillIcon";
 import ColorButton from "@/components/ui/ColorButton";
-
-const ICON_CLASS = "text-2xl";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Avatar from "@/components/ui/ColorImage";
 
 const menuList = [
   {
@@ -33,6 +33,8 @@ const menuList = [
 
 const Navbar = () => {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <div className="px-6 flex justify-between items-center">
@@ -46,7 +48,20 @@ const Navbar = () => {
               <Link href={href}>{pathname === href ? clickedIcon : icon}</Link>
             </li>
           ))}
-          <ColorButton text="Sign in" onClick={() => {}} />
+          {user && (
+            <li>
+              <Link href={`/user/${user.name}`}>
+                <Avatar image={user?.image || ""} />
+              </Link>
+            </li>
+          )}
+          <li>
+            {session ? (
+              <ColorButton text="Sign out" onClick={() => signOut()} />
+            ) : (
+              <ColorButton text="Sign in" onClick={() => signIn()} />
+            )}
+          </li>
         </ul>
       </nav>
     </div>

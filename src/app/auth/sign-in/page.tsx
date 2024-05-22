@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getProviders } from "next-auth/react";
 import SignIn from "@/components/SignIn";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect } from "next/navigation";
 
 type Props = {
   searchParams: {

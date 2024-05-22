@@ -1,28 +1,27 @@
-import { client } from "@/service/sanity";
+import SideBar from "@/components/SideBar";
+import FollowingBar from "@/components/FollowingBar";
+import PostList from "@/components/PostList";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-async function getContent() {
-  const CONTENT_QUERY = `*[_type == "project"] {
-  ...,
-  coverImage {
-    ...,
-    asset->
-  },
-  duration {
-    ...
-  },
-  tags[],
-  body
-}
-`;
-  const content = await client.fetch(CONTENT_QUERY);
-  return content;
-}
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
 
-// Log content to console
-getContent().then((content) => console.log(content));
+  if (!user) {
+    redirect("/auth/sign-in");
+  }
 
-// Insert the return component calling `getContent()` below
-
-export default function Home() {
-  return <h1 className="text-yellow-800">Instagram</h1>;
+  return (
+    <section className="w-full flex flex-col md:flex-row max-w-screen-[850px]">
+      <div className="w-full basis-3/4 min-w-0">
+        <FollowingBar />
+        <PostList />
+      </div>
+      <div className="basis-1/4 ml-8">
+        <SideBar user={user} />
+      </div>
+    </section>
+  );
 }

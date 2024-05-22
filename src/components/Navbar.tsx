@@ -11,7 +11,7 @@ import NewIcon from "@/components/ui/icons/NewIcon";
 import NewFillIcon from "@/components/ui/icons/NewFillIcon";
 import ColorButton from "@/components/ui/ColorButton";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Avatar from "@/components/ui/ColorImage";
+import Avatar from "@/components/ui/Avatar";
 
 const menuList = [
   {
@@ -51,7 +51,7 @@ const Navbar = () => {
           {user && (
             <li>
               <Link href={`/user/${user.name}`}>
-                <Avatar image={user?.image || ""} />
+                <Avatar image={user?.image || ""} highlight />
               </Link>
             </li>
           )}

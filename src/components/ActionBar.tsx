@@ -1,7 +1,8 @@
 import React from "react";
-import { HeartIcon } from "@sanity/icons";
 import { RiBookMarkedLine } from "react-icons/ri";
 import { parseDate } from "@/util/data";
+import BookmarkIcon from "@/components/ui/icons/BookmarkIcon";
+import HeartIcon from "@/components/ui/icons/HeartIcon";
 
 type Props = {
   likes: string[];
@@ -15,7 +16,7 @@ const ActionBar = ({ likes, username, text, createdAt }: Props) => {
     <>
       <div className="flex justify-between my-2 px-4">
         <HeartIcon />
-        <RiBookMarkedLine />
+        <BookmarkIcon />
       </div>
       <div className="px-4 py-1">
         <p className="text-sm font-bold mb-2">{`${likes?.length ?? 0} ${likes?.length > 1 ? "likes" : "like"}`}</p>

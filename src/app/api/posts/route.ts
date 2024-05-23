@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getUserByUsername } from "@/service/user";
+import { getFollowingPostListOf } from "@/service/post";
 
 const handler = async () => {
   const session = await getServerSession(authOptions);
@@ -11,7 +11,7 @@ const handler = async () => {
     return new Response("Authentication Error", { status: 401 });
   }
 
-  return getUserByUsername(user.username).then((data) =>
+  return getFollowingPostListOf(user.username).then((data) =>
     NextResponse.json(data),
   );
 };

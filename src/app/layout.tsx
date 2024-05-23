@@ -4,8 +4,7 @@ import "./globals.css";
 import { Open_Sans } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import AuthContext from "@/context/AuthContext";
-import { SWRConfig } from "swr";
-import SwrConfigContext from "@/context/SWRConfig";
+import SwrConfigContext from "@/context/SWRConfigContext";
 
 const openSans = Open_Sans({ subsets: ["latin"] });
 
@@ -21,9 +20,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={openSans.className}>
-      <body className="flex flex-col w-full max-w-screen-xl mx-auto">
+      <body className="w-full max-w-screen-xl mx-auto">
         <AuthContext>
-          <header className="sticky top-0 bg-white z-10 border-b border-b-gray-200">
+          <header className="sticky top-0 bg-white z-10 border-b">
             <Navbar />
           </header>
           <main className="w-full flex justify-center bg-neutral-50 min-h-full">

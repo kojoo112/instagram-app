@@ -16,7 +16,7 @@ const SideBar = ({ user: { name, username, image } }: Props) => {
           <p className="text-lg text-neutral-500">{name}</p>
         </div>
       </div>
-      <p className="text-sm text-neutral-500 mt-8">About ... Language</p>
+      <p className="text-sm text-neutral-500 mt-8">About .... Language</p>
       <p className="font-bold text-sm text-gray-700">
         @Copyright INSTAGRAM from METAL
       </p>

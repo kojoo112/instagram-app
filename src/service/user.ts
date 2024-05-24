@@ -1,5 +1,5 @@
 import { client } from "./sanity";
-import { User } from "@/model/User";
+import { ProfileUser, User } from "@/model/User";
 
 type OAuthUser = {
   id: string;
@@ -38,4 +38,28 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   "bookmarks": bookmarks[] -> _id
   }
   `);
+};
+
+export const getUserByUsernameOrName = async (
+  keyword: string | null,
+): Promise<User> => {
+  const query = keyword
+    ? `&& (name match "${keyword}") || (username match "${keyword}")`
+    : "";
+  return await client
+    .fetch(
+      `*[_type == "user" ${query}]{
+  ...,
+  "following": count(following),
+  "followers": count(followers),
+  }
+  `,
+    )
+    .then((users) =>
+      users.map((user: ProfileUser) => ({
+        ...user,
+        following: user.following ?? 0,
+        followers: user.followers ?? 0,
+      })),
+    );
 };

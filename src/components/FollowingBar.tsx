@@ -2,14 +2,14 @@
 
 import React from "react";
 import useSWR from "swr";
-import { DetailUser } from "@/model/User";
+import { HomeUser } from "@/model/AuthUser";
 import { PropagateLoader } from "react-spinners";
 import Avatar from "@/components/ui/Avatar";
 import Link from "next/link";
 import ScrollableBar from "@/components/ui/ScrollableBar";
 
 const FollowingBar = () => {
-  const { data, isLoading: loading, error } = useSWR<DetailUser>("/api/me");
+  const { data, isLoading: loading, error } = useSWR<HomeUser>("/api/me");
   const users = data?.following && [
     ...data.following,
     ...data.following,

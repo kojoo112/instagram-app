@@ -1,10 +1,10 @@
 import React from "react";
-import { ProfileUser } from "@/model/User";
+import { SearchUser } from "@/model/AuthUser";
 import Link from "next/link";
 import Avatar from "@/components/ui/Avatar";
 
 type Props = {
-  user: ProfileUser;
+  user: SearchUser;
 };
 
 const UserCard = ({

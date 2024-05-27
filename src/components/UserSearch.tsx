@@ -2,7 +2,7 @@
 
 import React, { FormEvent, useState } from "react";
 import useSWR from "swr";
-import { ProfileUser } from "@/model/User";
+import { SearchUser } from "@/model/AuthUser";
 import GridSpinner from "@/components/GridSpinner";
 import UserCard from "@/components/UserCard";
 import useDebounce from "@/hooks/debounce";
@@ -14,7 +14,7 @@ const UserSearch = () => {
     data: users,
     isLoading,
     error,
-  } = useSWR<ProfileUser[]>(`/api/users?keyword=${debouncedKeyword}`);
+  } = useSWR<SearchUser[]>(`/api/users?keyword=${debouncedKeyword}`);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();

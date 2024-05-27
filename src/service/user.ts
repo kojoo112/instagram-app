@@ -1,5 +1,5 @@
 import { client } from "./sanity";
-import { ProfileUser, User } from "@/model/User";
+import { SearchUser, AuthUser } from "@/model/AuthUser";
 
 type OAuthUser = {
   id: string;
@@ -29,7 +29,9 @@ export const addUser = async ({
   });
 };
 
-export const getUserByUsername = async (username: string): Promise<User> => {
+export const getUserByUsername = async (
+  username: string,
+): Promise<AuthUser> => {
   return await client.fetch(`*[_type == "user" && username == "${username}"][0]{
   ...,
   "id": _id,
@@ -42,7 +44,7 @@ export const getUserByUsername = async (username: string): Promise<User> => {
 
 export const getUserByUsernameOrName = async (
   keyword: string | null,
-): Promise<User> => {
+): Promise<AuthUser> => {
   const query = keyword
     ? `&& (name match "${keyword}") || (username match "${keyword}")`
     : "";
@@ -56,10 +58,31 @@ export const getUserByUsernameOrName = async (
   `,
     )
     .then((users) =>
-      users.map((user: ProfileUser) => ({
+      users.map((user: SearchUser) => ({
         ...user,
         following: user.following ?? 0,
         followers: user.followers ?? 0,
       })),
     );
+};
+
+export const getUserForProfile = async (username: string) => {
+  return client
+    .fetch(
+      `
+    *[_type == "user" && username == "${username}"][0] {
+      ...,
+      "id": _id,
+      "following": count(following), 
+      "followers": count(followers),
+      "posts": count(*[_type == "post" && author -> username == "${username}"]) 
+    }
+  `,
+    )
+    .then((user) => ({
+      ...user,
+      following: user.following ?? 0,
+      followers: user.followers ?? 0,
+      posts: user.posts ?? 0,
+    }));
 };

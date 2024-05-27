@@ -24,9 +24,7 @@ export const getFollowingPostListOf = async (username: string) => {
     }
 `,
     )
-    .then((posts) =>
-      posts.map((post: SimplePost) => ({ ...post, image: urlFor(post.image) })),
-    );
+    .then(mapPosts);
 };
 
 export const getPost = async (id: string) => {
@@ -45,4 +43,50 @@ export const getPost = async (id: string) => {
     }`,
     )
     .then((post) => ({ ...post, image: urlFor(post.image) }));
+};
+
+export const getPostOf = (username: string) => {
+  return client
+    .fetch(
+      `
+    *[_type == "post" && author->username == "${username}"]
+    | order(_createdAt desc){
+        ${simplePostProjection}
+    }
+    `,
+    )
+    .then(mapPosts);
+};
+
+export const getLikedPostsOf = (username: string) => {
+  return client
+    .fetch(
+      `
+    *[_type == "post" && "${username}" in likes[]->username]
+    | order(_createdAt desc){
+        ${simplePostProjection}
+    }
+    `,
+    )
+    .then(mapPosts);
+};
+
+export const getSavedPostsOf = (username: string) => {
+  return client
+    .fetch(
+      `
+    *[_type == "post" && _id in *[_type == "user" && username == "${username}"].bookmarks[]._ref]
+    | order(_createdAt desc){
+        ${simplePostProjection}
+    }
+    `,
+    )
+    .then(mapPosts);
+};
+
+const mapPosts = (posts: SimplePost[]) => {
+  return posts.map((post: SimplePost) => ({
+    ...post,
+    image: urlFor(post.image),
+  }));
 };

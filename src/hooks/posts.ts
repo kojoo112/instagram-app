@@ -1,4 +1,4 @@
-import useSWR, { useSWRConfig } from "swr";
+import useSWR from "swr";
 import { SimplePost } from "@/model/Post";
 
 async function updateLike(id: string, like: boolean) {

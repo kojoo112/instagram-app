@@ -86,3 +86,18 @@ export const getUserForProfile = async (username: string) => {
       posts: user.posts ?? 0,
     }));
 };
+
+export const addBookmark = async (userId: string, postId: string) => {
+  return await client
+    .patch(userId)
+    .setIfMissing({ bookmarks: [] })
+    .append("bookmarks", [{ _ref: postId, _type: "reference" }])
+    .commit({ autoGenerateArrayKeys: true });
+};
+
+export const removeBookmark = async (userId: string, postId: string) => {
+  return await client
+    .patch(userId)
+    .unset([`bookmarks[_ref=="${postId}"]`])
+    .commit();
+};

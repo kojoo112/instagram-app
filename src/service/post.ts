@@ -45,7 +45,7 @@ export const getPost = async (id: string) => {
     .then((post) => ({ ...post, image: urlFor(post.image) }));
 };
 
-export const getPostOf = (username: string) => {
+export const getPostOf = async (username: string) => {
   return client
     .fetch(
       `
@@ -58,7 +58,7 @@ export const getPostOf = (username: string) => {
     .then(mapPosts);
 };
 
-export const getLikedPostsOf = (username: string) => {
+export const getLikedPostsOf = async (username: string) => {
   return client
     .fetch(
       `
@@ -67,21 +67,27 @@ export const getLikedPostsOf = (username: string) => {
         ${simplePostProjection}
     }
     `,
+      {},
+      {
+        cache: "no-cache",
+      },
     )
     .then(mapPosts);
 };
 
 export const getSavedPostsOf = async (username: string) => {
-  const posts = await client.fetch(
-    `
-    *[_type == "post" && _id in *[_type == "user" && username == "${username}"].bookmarks[]._ref]
-    | order(_createdAt desc){
+  return client
+    .fetch(
+      `*[_type == "post" && _id in *[_type=="user" && username=="${username}"].bookmarks[]._ref]
+      | order(_createdAt desc){
         ${simplePostProjection}
-    }
-    `,
-  );
-
-  return mapPosts(posts);
+      }`,
+      {},
+      {
+        cache: "no-cache",
+      },
+    )
+    .then(mapPosts);
 };
 
 const mapPosts = (posts: SimplePost[]) => {

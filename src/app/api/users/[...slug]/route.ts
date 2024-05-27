@@ -13,11 +13,11 @@ const handler = async (_: NextRequest, context: Context) => {
     return new NextResponse("Bad Request", { status: 400 });
   }
 
-  const [username, tab] = slug;
+  const [username, query] = slug;
   let request = getPostOf;
-  if (tab === "saved") {
+  if (query === "saved") {
     request = getSavedPostsOf;
-  } else if (tab === "liked") {
+  } else if (query === "liked") {
     request = getLikedPostsOf;
   }
 

@@ -1,16 +1,40 @@
-import React from "react";
+import React, { FormEvent, useState } from "react";
 import { BiSmile } from "react-icons/bi";
 
-const CommentForm = () => {
+type Props = {
+  onPostComment: (comment: string) => void;
+};
+
+const CommentForm = ({ onPostComment }: Props) => {
+  const [comment, setComment] = useState("");
+  const buttonDisabled = comment.length === 0;
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onPostComment(comment);
+    setComment("");
+  };
+
   return (
-    <form className="flex items-center border-t border-neutral-300 px-3">
+    <form
+      onSubmit={handleSubmit}
+      className="flex items-center border-t border-neutral-300 px-3"
+    >
       <BiSmile />
       <input
         className="w-full ml-2 border-none outline-none p-3"
         type="text"
         placeholder="Add a comment..."
+        required
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
       />
-      <button className="font-bold text-sky-500 ml-2">Post</button>
+      <button
+        disabled={buttonDisabled}
+        className={`font-bold ml-2 ${buttonDisabled ? "text-sky-300" : "text-sky-500"}`}
+      >
+        Post
+      </button>
     </form>
   );
 };

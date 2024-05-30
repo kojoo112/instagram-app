@@ -1,10 +1,18 @@
 import useSWR from "swr";
-import { SimplePost } from "@/model/Post";
+import { Comment, SimplePost } from "@/model/Post";
+import { useCallback } from "react";
 
 async function updateLike(id: string, like: boolean) {
   return fetch("/api/likes", {
     method: "PUT",
     body: JSON.stringify({ id, like }),
+  }).then((res) => res.json());
+}
+
+async function addComment(id: string, comment: string) {
+  return fetch("/api/comments", {
+    method: "POST",
+    body: JSON.stringify({ id, comment }),
   }).then((res) => res.json());
 }
 
@@ -16,17 +24,36 @@ export default function usePosts() {
     mutate,
   } = useSWR<SimplePost[]>("/api/posts");
 
-  const setLike = (post: SimplePost, username: string, like: boolean) => {
+  const setLike = useCallback(
+    (post: SimplePost, username: string, like: boolean) => {
+      const newPost = {
+        ...post,
+        likes: like
+          ? [...post.likes, username]
+          : post.likes.filter((like) => like !== username),
+      };
+
+      const newPosts = posts?.map((p) => (p.id === post.id ? newPost : p));
+
+      return mutate(updateLike(post.id, like), {
+        optimisticData: newPosts,
+        populateCache: false,
+        revalidate: false,
+        rollbackOnError: true,
+      });
+    },
+    [posts, mutate],
+  );
+
+  const postComment = (post: SimplePost, comment: Comment) => {
     const newPost = {
       ...post,
-      likes: like
-        ? [...post.likes, username]
-        : post.likes.filter((like) => like !== username),
+      comments: post.comments + 1,
     };
 
     const newPosts = posts?.map((p) => (p.id === post.id ? newPost : p));
 
-    return mutate(updateLike(post.id, like), {
+    return mutate(addComment(post.id, comment.comment), {
       optimisticData: newPosts,
       populateCache: false,
       revalidate: false,
@@ -34,5 +61,5 @@ export default function usePosts() {
     });
   };
 
-  return { posts, isLoading, error, setLike };
+  return { posts, isLoading, error, setLike, postComment };
 }

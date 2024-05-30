@@ -1,23 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { parseDate } from "@/util/data";
 import BookmarkIcon from "@/components/ui/icons/BookmarkIcon";
 import HeartIcon from "@/components/ui/icons/HeartIcon";
 import HeartFillIcon from "@/components/ui/icons/HeartFillIcon";
 import BookmarkFillIcon from "@/components/ui/icons/BookmarkFillIcon";
 import ToggleButton from "@/components/ui/icons/ToggleButton";
-import { SimplePost } from "@/model/Post";
-import { useSession } from "next-auth/react";
+import { Comment, SimplePost } from "@/model/Post";
 import usePosts from "@/hooks/posts";
 import useMe from "@/hooks/me";
+import CommentForm from "@/components/CommentForm";
 
 type Props = {
   post: SimplePost;
+  children?: React.ReactNode;
+  onComment: (comment: Comment) => void;
 };
 
-const ActionBar = ({ post }: Props) => {
-  const { id, likes, text, username, createdAt } = post;
+const ActionBar = ({ post, children, onComment }: Props) => {
+  const { id, likes, createdAt } = post;
   const { user, setBookmark } = useMe();
 
   const liked = user ? likes.includes(user.username) : false;
@@ -30,6 +32,10 @@ const ActionBar = ({ post }: Props) => {
 
   const handleBookmark = (bookmark: boolean) => {
     user && setBookmark(post.id, bookmark);
+  };
+
+  const handleComment = (comment: string) => {
+    user && onComment({ comment, username: user.username, image: user.image });
   };
 
   return (
@@ -50,16 +56,12 @@ const ActionBar = ({ post }: Props) => {
       </div>
       <div className="px-4 py-1">
         <p className="text-sm font-bold mb-2">{`${likes?.length ?? 0} ${likes?.length > 1 ? "likes" : "like"}`}</p>
-        {text && (
-          <p>
-            <span className="font-bold mr-1">{username}</span>
-            {text}
-          </p>
-        )}
+        {children}
         <p className="text-xs text-neutral-500 uppercase my-2">
           {parseDate(createdAt)}
         </p>
       </div>
+      <CommentForm onPostComment={handleComment} />
     </>
   );
 };
